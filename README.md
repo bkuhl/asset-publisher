@@ -1,5 +1,1 @@
-## NPM Publisher
-
-## GitLab Setup
-
-[Add a webhook](https://gitlab.com/gitlab-org/gitlab-ce/blob/master/doc/web_hooks/web_hooks.md)  
+## NPM Publisher [![Build Status](https://travis-ci.org/realpage/npm-publisher.svg?branch=master)](https://travis-ci.org/realpage/npm-publisher)
