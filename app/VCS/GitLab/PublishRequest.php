@@ -10,7 +10,13 @@ class PublishRequest extends Request implements PublishRequestInterface
 {
     public function repository()
     {
-        return new Repository($this->get('repository.git_ssh_url'));
+        $repoPath = explode('/', $this->get('project.path_with_namespace'));
+
+        return new Repository(
+            $this->get('repository.git_ssh_url'),
+            $repoPath[0],
+            $repoPath[1]
+        );
     }
     
     public function version()
