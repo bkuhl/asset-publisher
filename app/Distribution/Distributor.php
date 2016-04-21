@@ -2,17 +2,26 @@
 
 namespace App\Distribution;
 
+use GrahamCampbell\Flysystem\FlysystemManager;
 use Storage;
 
 class Distributor
 {
+    /** @var FlysystemManager */
+    protected $flysystem;
+
+    public function __construct(FlysystemManager $flysystem)
+    {
+        $this->flysystem = $flysystem;
+    }
+
     public function distribute($contents, $prefix)
     {
-        $directories = Storage::directories();
+        $directories = $this->flysystem->listContents();
         if (!in_array($prefix, $directories)) {
-            Storage::makeDirectory($prefix);
+            $this->flysystem->createDir($prefix);
         }
 
-        Storage::copy($contents, $prefix.$contents);
+        $this->flysystem->copy($contents, $prefix.$contents);
     }
 }
