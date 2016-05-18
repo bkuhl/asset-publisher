@@ -1,7 +1,9 @@
+# This container should be used for any/all CLI processes
+# including cron, queues, etc.
 FROM realpage/php:7.0-fpm
 LABEL application="lumen" \
       com.realpage.php.version="7.0" \
-      com.realpage.php.type="fpm"
+      com.realpage.php.type="cli"
 
 # Copy the application files to the container
 ADD . /var/www/html
@@ -22,8 +24,4 @@ RUN apt-get update && apt-get install -y git zip unzip \
     && composer global require hirak/prestissimo \
 
     # production-ready dependencies
-    && composer install  --no-interaction --no-dev --prefer-dist \
-
-    # allow git checkouts to write to a folder
-    && mkdir -p /var/www/html/storage/tmp \
-    && chmod 770 /var/www/html/storage/tmp
+    && composer install  --no-interaction --no-dev --prefer-dist

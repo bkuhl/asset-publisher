@@ -25,23 +25,21 @@ class Publisher
         $this->filesystem = $filesystem;
     }
 
-    public function publish($version, Repository $repository)
+    public function publish(Version $version, Repository $repository): bool
     {
-        $localPath = $this->git->checkout($repository);
+        $repository = $this->git->clone($repository);
 
-        // distribute a version for each directory
-        $prefix = 'v';
-        $versions = explode('.', $version);
-        foreach ($versions as $segment) {
-            // v1, v1.0, v1.0.0
-            $prefix .= $segment;
+        $this->git->checkoutTag($repository, $version);
 
-            $this->distributor->distribute($localPath, $prefix);
+        // We'll intentionally only provide a minor and patch reference so
+        // we don't enable developers to skip QA, since major and minor versions
+        // will definitely contain breaking changes
+        $this->distributor->distribute($repository->path(), $version->patchTag());
+        $this->distributor->distribute($repository->path(), $version->minorTag());
 
-            // v1., v1.0.
-            $prefix .= '.';
-        }
+        // clean up temporary directory
+        $this->filesystem->deleteDirectory($repository->path());
 
-        $this->filesystem->deleteDirectory($localPath);
+        return true;
     }
 }

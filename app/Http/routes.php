@@ -16,10 +16,7 @@ $app->get('/', function () use ($app) {
 });
 
 $app->group([
-    'prefix' => '/gitlab',
     'namespace' => 'App\Http\Controllers'
 ], function () use ($app) {
-    $app->bind(\App\VCS\PublishRequestInterface::class, \App\VCS\GitLab\PublishRequest::class);
-
-    $app->post('/publish', 'PublishController@publish');
+    $app->post('/webhook', 'RepositoryEventController@event');
 });

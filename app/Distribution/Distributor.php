@@ -15,7 +15,7 @@ class Distributor
         $this->flysystem = $flysystem;
     }
 
-    public function distribute($contents, $prefix)
+    public function distribute(string $contents, string $prefix)
     {
         $directories = $this->flysystem->listContents();
         if (!in_array($prefix, $directories)) {

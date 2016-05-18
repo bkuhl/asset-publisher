@@ -13,25 +13,41 @@ class Repository
     /** @var string */
     protected $namespace;
 
-    public function __construct($sshUrl, $namespace, $name)
+    /** @var string */
+    protected $path;
+
+    public function __construct(string $sshUrl, string $namespace, string $name)
     {
         $this->sshUrl = $sshUrl;
         $this->namespace = $namespace;
         $this->name = $name;
     }
 
-    public function sshUrl()
+    //for some reason phpcs sees issues with these 2 methods
+    //@codingStandardsIgnoreStart
+    public function sshUrl(): string
     {
         return $this->sshUrl;
     }
 
-    public function name()
+    public function namespace(): string
+    {
+        return $this->namespace;
+    }
+    //@codingStandardsIgnoreEnd
+
+    public function name(): string
     {
         return $this->name;
     }
 
-    public function namespace()
+    public function setPath(string $path)
     {
-        return $this->namespace;
+        $this->path = $path;
+    }
+
+    public function path(): string
+    {
+        return $this->path;
     }
 }
