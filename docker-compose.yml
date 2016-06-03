@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: infrastructure/Dockerfile
-    image: realpage/asset-publisher:dev
+    image: realpage/asset-publisher
     env_file: .env
     volumes:
       - ./infrastructure/nginx:/etc/nginx/conf.d
