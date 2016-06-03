@@ -1,22 +1,14 @@
 version: '2'
 
 services:
-  fpm:
-    build:
-      context: .
-      dockerfile: infrastructure/fpm/Dockerfile
-    image: realpage/asset-publisher:fpm
-    env_file: .env
-    volumes:
-      - ./:/var/www/html
   web:
     build:
       context: .
-      dockerfile: infrastructure/nginx/Dockerfile
-    image: realpage/asset-publisher:nginx
+      dockerfile: infrastructure/Dockerfile
+    image: realpage/asset-publisher:dev
+    env_file: .env
     volumes:
       - ./infrastructure/nginx:/etc/nginx/conf.d
-      - ./resources:/var/www/html/resources
-      - ./public:/var/www/html/public
+      - .:/var/www/html
     ports:
       - "80:80"

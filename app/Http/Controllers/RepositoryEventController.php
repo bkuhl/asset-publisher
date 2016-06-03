@@ -12,6 +12,6 @@ class RepositoryEventController extends Controller
         $repositoryEvent = $repositoryEventFactory->make($request);
         $repositoryEvent->handle();
 
-        return response();
+        return response('');
     }
 }

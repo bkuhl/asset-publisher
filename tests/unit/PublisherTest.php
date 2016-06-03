@@ -52,8 +52,8 @@ class PublisherTest extends \TestCase
         $this->git->shouldReceive('checkoutTag')->with($repository, $version)->once();
 
         // assert minor and patch versions get published
-        $this->distributor->shouldReceive('distribute')->with($path, 'v1.3')->once();
-        $this->distributor->shouldReceive('distribute')->with($path, 'v1.3.2')->once();
+        $this->distributor->shouldReceive('distribute')->with($repository, 'v1.3')->once();
+        $this->distributor->shouldReceive('distribute')->with($repository, 'v1.3.2')->once();
 
         // cleanup temporary checkout
         $this->filesystem->shouldReceive('deleteDirectory')->with($path)->once();

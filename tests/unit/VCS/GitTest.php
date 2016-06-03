@@ -4,6 +4,7 @@ namespace Tests\App;
 
 use App\VCS\Git;
 use App\VCS\Tagged;
+use Illuminate\Filesystem\Filesystem;
 use Mockery;
 use App\VCS\Repository;
 use Symfony\Component\Process\Exception\ProcessFailedException;
@@ -15,11 +16,25 @@ class GitTest extends \TestCase
     /** @var Mockery\MockInterface */
     protected $repository;
 
+    /** @var Mockery\MockInterface */
+    protected $filesystem;
+
+    /** @var Mockery\MockInterface */
+    protected $version;
+
+    /** @var Git */
+    protected $git;
+
     public function setUp()
     {
         parent::setUp();
 
         $this->repository = Mockery::mock(Repository::class);
+        $this->filesystem = Mockery::mock(Filesystem::class);
+        $this->version = Mockery::mock(Tagged::class)->shouldIgnoreMissing();
+
+
+        $this->git = new Git($this->filesystem);
     }
 
     /**
@@ -29,16 +44,12 @@ class GitTest extends \TestCase
     {
         $path = uniqid();
 
-        $git = Mockery::mock(Git::class.'[temporaryPath]');
-        $git->shouldAllowMockingProtectedMethods();
-        $git->shouldReceive('temporaryPath')->andReturn($path);
+        $this->git = Mockery::mock(Git::class.'[temporaryPath]', [$this->filesystem]);
+        $this->git->shouldAllowMockingProtectedMethods();
+        $this->git->shouldReceive('temporaryPath')->andReturn($path);
 
-        $repoNamespace = uniqid();
-        $repoName = uniqid();
-        $this->repository->shouldReceive('namespace')->andReturn($repoNamespace);
-        $this->repository->shouldReceive('name')->andReturn($repoName);
         $this->repository->shouldReceive('path')->andReturn($path);
-        $this->repository->shouldReceive('setPath')->with($path.DIRECTORY_SEPARATOR.$repoNamespace.'/'.$repoName)->once();
+        $this->repository->shouldReceive('setPath')->with($path)->once();
         $this->repository->shouldReceive('sshUrl')->andReturn(uniqid());
 
         // passing an empty string in place of a "command" that's normally passed
@@ -48,7 +59,7 @@ class GitTest extends \TestCase
         $process->shouldReceive('isSuccessful')->andReturnTrue();
         app()->instance(Process::class, $process);
 
-        $this->assertEquals($this->repository, $git->clone($this->repository));
+        $this->assertEquals($this->repository, $this->git->clone($this->repository, $this->version));
     }
 
     /**
@@ -58,6 +69,8 @@ class GitTest extends \TestCase
     {
         $this->expectException(ProcessFailedException::class);
 
+        $this->filesystem->shouldReceive('makeDirectory')->once();
+
         $this->repository->shouldIgnoreMissing();
 
         // passing an empty string in place of a "command" that's normally passed
@@ -66,8 +79,7 @@ class GitTest extends \TestCase
         $process->shouldIgnoreMissing();
         app()->instance(Process::class, $process);
 
-        $git = new Git();
-        $this->assertEquals($this->repository, $git->clone($this->repository));
+        $this->assertEquals($this->repository, $this->git->clone($this->repository, $this->version));
     }
 
     /**
@@ -85,9 +97,7 @@ class GitTest extends \TestCase
         $process->shouldReceive('isSuccessful')->andReturnTrue();
         app()->instance(Process::class, $process);
 
-        $version = Mockery::mock(Tagged::class)->shouldIgnoreMissing();
-        $git = new Git();
-        $this->assertTrue($git->checkoutTag($this->repository, $version));
+        $this->assertTrue($this->git->checkoutTag($this->repository, $this->version));
     }
 
     /**
@@ -105,8 +115,6 @@ class GitTest extends \TestCase
         $process->shouldIgnoreMissing();
         app()->instance(Process::class, $process);
 
-        $version = Mockery::mock(Tagged::class)->shouldIgnoreMissing();
-        $git = new Git();
-        $this->assertTrue($git->checkoutTag($this->repository, $version));
+        $this->assertTrue($this->git->checkoutTag($this->repository, $this->version));
     }
 }

@@ -9,7 +9,7 @@ env:
   APP_ENV: local
   APP_DEBUG: true
   CACHE_DRIVER: array
-  QUEUE_DRIVER: sync
+  QUEUE_DRIVER: redis
 before_install:
   - export DOCKER_REPO="${TRAVIS_REPO_SLUG,,}"
   - export IMAGE_SLUG="$TRAVIS_BRANCH.${TRAVIS_COMMIT::8}.${TRAVIS_BUILD_ID}"
@@ -22,6 +22,10 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - cp .env.example .env
+  # pass environment variables in travis to the app
+  - sed -ri 's/^PRIVATE_KEY=/PRIVATE_KEY=\$PRIVATE_KEY/' .env \
+  - sed -ri 's/^AWS_KEY=/AWS_KEY=\$AWS_KEY/' .env \
+  - sed -ri 's/^AWS_SECRET=/AWS_SECRET=\$AWS_SECRET/' .env \
   # Stop the postgres instance travis sets up automatically
   - sudo /etc/init.d/postgresql stop
   # set env vars in the build settings to interact with repositories
@@ -34,21 +38,14 @@ before_install:
   - docker-compose ps
 install:
   # Install dev php dependencies
-  - docker run -i -v $(pwd):/var/www/html $(docker images -f label=application=lumen -q ) composer install --no-interaction --prefer-dist
+  - docker exec -it --user=www-data $(docker-compose ps -q web) composer install --no-interaction --prefer-dist
 script:
   # Ensure phpcs triggers a failing build
-  - docker exec -it $(docker-compose ps -q fpm) vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
+  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
   # Ensure breaking PSR2 compliance fails in CI
-  - docker exec -it $(docker-compose ps -q fpm) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
+  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
   # Run tests
-  - docker exec -it $(docker-compose ps -q fpm) vendor/bin/phpunit
-  # Build cli container
-  - docker build -t "${DOCKER_REPO}:cli" -f infrastructure/cli/Dockerfile .
-after_success:
-  # Deployable image tags must be in format: [service].[branch].[commit-hash].[timestamp]
-  - if [[ $TRAVIS_BRANCH == 'master' || $TRAVIS_BRANCH == 'staging' || $TRAVIS_BRANCH == 'develop' ]]; then docker tag "${DOCKER_REPO}:fpm" "${DOCKER_REPO}:fpm.${IMAGE_SLUG}" && docker push "${DOCKER_REPO}:fpm.${IMAGE_SLUG}" ; fi
-  - if [[ $TRAVIS_BRANCH == 'master' || $TRAVIS_BRANCH == 'staging' || $TRAVIS_BRANCH == 'develop' ]]; then docker tag "${DOCKER_REPO}:cli" "${DOCKER_REPO}:cli.${IMAGE_SLUG}" && docker push "${DOCKER_REPO}:cli.${IMAGE_SLUG}" ; fi
-  - if [[ $TRAVIS_BRANCH == 'master' || $TRAVIS_BRANCH == 'staging' || $TRAVIS_BRANCH == 'develop' ]]; then docker tag "${DOCKER_REPO}:nginx" "${DOCKER_REPO}:nginx.${IMAGE_SLUG}" && docker push "${DOCKER_REPO}:nginx.${IMAGE_SLUG}" ; fi
+  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit --testsuite=unit
 notifications:
   slack:
-    secure: 7Da36aBfrdN/RZJQhl1tuKk0h8R9fy1uTlIPnb15XDyEi5aVmDR/O+t4P30xRSAIQEZhdRs+eZtUnd6A6AqFHwHRAZqkM7RiawHBdPxu3yBQtt82QhctgSw21G4jY4XBOYTTZ3zny/+J3aYMJpMMOQnLamMEJiXTXWW2Hx3kKOuLYdfKGumdlgTdUqi6JmC1w4GoDW2nzWFYdaHkxDBIefMXD/A7kf41mowIbyCi9MkUszn7ZOuNsqmtm1JYnmF4J5X4hgi7sgT9cMxMGdV5ugcmkoj2k8Vy8knJUbgNnaz0DmtRObnlPpaXOEJpFcsKsamSZBCnf23sT1b7N2T3TjVHReddoRuRz5mv5iYmZ/al5xsvEwN5BtEukjRPvRNZvNaSQ0OayjfgZtNyOflu5/7pBZpOoLcn+YXKMfp8Ay0MlxYD3BlTqdpwct6EtnJs2K9C8hQ+8HMYA72GwmLauQbjhI7ZrV2YXs+cE9x3rFyCF0sTE/j+XtL+Xb9cTKbRwkl/PLzOyYwWqrYkMxmIfS5IUiIqTuJBBwtblu2ob7Vqq60j1vPWfkHskEsb/kTnmgsj/cNcBpVhAIr1iuykX8krtPGSRFS3bogz57cBgn/014HGSCdUAkSGMDxzGoyO9+IeDF71Uxst+pBPuWbqCorlNIj+DwL9hsNO/pbhLYE=
+    secure: ${SLACK_KEY}

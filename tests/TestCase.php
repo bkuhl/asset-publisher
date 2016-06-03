@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @ignore
+ */
 class TestCase extends Laravel\Lumen\Testing\TestCase
 {
     /**

@@ -2,26 +2,34 @@
 
 namespace App\Distribution;
 
-use GrahamCampbell\Flysystem\FlysystemManager;
-use Storage;
+use App\VCS\Repository;
+use Aws\S3\S3Client;
+use Illuminate\Config\Repository as ConfigRepository;
 
 class Distributor
 {
-    /** @var FlysystemManager */
-    protected $flysystem;
+    /** @var ConfigRepository */
+    protected $config;
 
-    public function __construct(FlysystemManager $flysystem)
+    /** @var S3Client */
+    protected $s3Client;
+
+    public function __construct()
     {
-        $this->flysystem = $flysystem;
+        // flysystem can't upload a directory, but the underlying adapter can
+        $this->s3Client = app('s3Client');
+
+        // injecting this via the constructor it doesn't contain
+        // the config values we need
+        $this->config = app('config');
     }
 
-    public function distribute(string $contents, string $prefix)
+    public function distribute(Repository $repository, string $version)
     {
-        $directories = $this->flysystem->listContents();
-        if (!in_array($prefix, $directories)) {
-            $this->flysystem->createDir($prefix);
-        }
-
-        $this->flysystem->copy($contents, $prefix.$contents);
+        $this->s3Client->uploadDirectory(
+            $repository->path().DIRECTORY_SEPARATOR.$this->config->get('build.path'),
+            $this->config->get('build.distribution.aws.bucket'),
+            $version
+        );
     }
 }

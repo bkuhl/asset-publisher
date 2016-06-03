@@ -5,7 +5,6 @@ namespace App\VCS\GitHub;
 use App\Publisher;
 use App\VCS\PublishEvent;
 use App\VCS\Repository;
-use App\VCS\RepositoryEvent;
 use App\Version;
 use Illuminate\Http\Request;
 
@@ -23,8 +22,9 @@ class TagCreated extends PublishEvent
 
     public function repository(): Repository
     {
-        $namespace = $this->request->json('repository.owner.login');
-        $repository = $this->request->json('repository.name');
+        $repositoryName = explode('/', $this->request->json('repository.full_name'));
+        $namespace = $repositoryName[0];
+        $repository = $repositoryName[1];
         return app(Repository::class, [
             'git@github.com:'.$namespace.'/'.$repository.'.git',
             $namespace,

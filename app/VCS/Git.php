@@ -2,17 +2,26 @@
 
 namespace App\VCS;
 
+use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 use Symfony\Component\Process\Process;
 
 class Git
 {
+    /** @var Filesystem */
+    protected $filesystem;
+
+    public function __construct(Filesystem $filesystem)
+    {
+        $this->filesystem = $filesystem;
+    }
+
     public function clone(Repository $repository) : Repository
     {
         $path = $this->temporaryPath();
 
         /** @var Process $process */
-        $process = app(Process::class, ['git clone "'.$repository->sshUrl().'" .']);
+        $process = app(Process::class, ['git clone "'.$repository->sshUrl().'" "."']);
         $process->setWorkingDirectory($path);
         $process->run();
 
@@ -20,7 +29,7 @@ class Git
             throw new ProcessFailedException($process);
         }
 
-        $repository->setPath($path.DIRECTORY_SEPARATOR.$repository->namespace().'/'.$repository->name());
+        $repository->setPath($path);
 
         return $repository;
     }
@@ -28,7 +37,7 @@ class Git
     public function checkoutTag(Repository $repository, Tagged $version): bool
     {
         /** @var Process $process */
-        $process = app(Process::class, ['git checkout tags/'.$version->minorTag()]);
+        $process = app(Process::class, ['git checkout tags/'.$version->patchTag()]);
         $process->setWorkingDirectory($repository->path());
         $process->run();
 
@@ -41,6 +50,10 @@ class Git
 
     protected function temporaryPath(): string
     {
-        return storage_path('tmp/'.uniqid());
+        $path = storage_path('git/'.uniqid());
+
+        $this->filesystem->makeDirectory($path);
+
+        return $path;
     }
 }

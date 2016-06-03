@@ -38,8 +38,7 @@ class TagCreatedTest extends \TestCase
     {
         $repo = 'my-repo';
         $namespace = 'realpage';
-        $this->request->shouldReceive('json')->with('repository.owner.login')->andReturn($namespace);
-        $this->request->shouldReceive('json')->with('repository.name')->andReturn($repo);
+        $this->request->shouldReceive('json')->with('repository.full_name')->andReturn($namespace.'/'.$repo);
 
         $repository = $this->event->repository();
 

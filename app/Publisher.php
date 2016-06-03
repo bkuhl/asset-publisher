@@ -34,8 +34,8 @@ class Publisher
         // We'll intentionally only provide a minor and patch reference so
         // we don't enable developers to skip QA, since major and minor versions
         // will definitely contain breaking changes
-        $this->distributor->distribute($repository->path(), $version->patchTag());
-        $this->distributor->distribute($repository->path(), $version->minorTag());
+        $this->distributor->distribute($repository, $version->patchTag());
+        $this->distributor->distribute($repository, $version->minorTag());
 
         // clean up temporary directory
         $this->filesystem->deleteDirectory($repository->path());
