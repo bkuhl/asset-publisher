@@ -40,20 +40,21 @@ class DistributorTest extends \TestCase
     {
         $awsBucket = uniqid();
         $buildPath = uniqid();
-        $namespace = uniqid();
         $this->config->shouldReceive('get')->with('build.path')->andReturn($buildPath);
         $this->config->shouldReceive('get')->with('build.distribution.aws.bucket')->andReturn($awsBucket);
-        $this->config->shouldReceive('get')->with('build.namespace')->andReturn($namespace);
+        $this->config->shouldReceive('get')->with('build.use_namespaces')->andReturnTrue();
 
         $version = uniqid();
         $path = uniqid();
+        $name = uniqid();
         $repository = Mockery::mock(Repository::class);
         $repository->shouldReceive('path')->andReturn($path);
+        $repository->shouldReceive('name')->andReturn($name);
 
         $this->s3Client->shouldReceive('uploadDirectory')->with(
             $path.DIRECTORY_SEPARATOR.$buildPath,
             $awsBucket,
-            $namespace.DIRECTORY_SEPARATOR.$version
+            $name.DIRECTORY_SEPARATOR.$version
         )->once();
 
         $this->distributor->distribute($repository, $version);

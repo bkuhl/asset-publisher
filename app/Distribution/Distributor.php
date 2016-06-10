@@ -27,8 +27,8 @@ class Distributor
     public function distribute(Repository $repository, string $version)
     {
         $namespace = $version;
-        if ($this->config->get('build.namespace') != null) {
-            $namespace = $this->config->get('build.namespace').DIRECTORY_SEPARATOR.$namespace;
+        if ($this->config->get('build.use_namespaces')) {
+            $namespace = $repository->name().DIRECTORY_SEPARATOR.$namespace;
         }
 
         $this->s3Client->uploadDirectory(
