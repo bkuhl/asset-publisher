@@ -31,7 +31,7 @@ RUN \
     && docker-php-ext-install mcrypt mbstring pdo_mysql \
 
     # install composer
-    && wget -O /usr/bin/composer https://getcomposer.org/composer.phar \
+    && wget -O /usr/bin/composer http://getcomposer.org/composer.phar \
     && chmod +x /usr/bin/composer \
     && mkdir -p /home/www-data/.composer \
 
