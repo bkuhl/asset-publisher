@@ -7,6 +7,7 @@ use App\VCS\Repository;
 use Aws\S3\S3Client;
 use Mockery;
 use Illuminate\Config\Repository as ConfigRepository;
+use Log;
 
 class DistributorTest extends \TestCase
 {
@@ -57,6 +58,8 @@ class DistributorTest extends \TestCase
             $name.DIRECTORY_SEPARATOR.$version
         )->once();
 
+        Log::shouldReceive('info')->once();
+        
         $this->distributor->distribute($repository, $version);
     }
 }

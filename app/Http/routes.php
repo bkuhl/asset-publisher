@@ -12,7 +12,7 @@
 */
 
 $app->get('/', function () use ($app) {
-    return "I'm still here!";
+    return response('');
 });
 
 $app->group([
@@ -22,4 +22,8 @@ $app->group([
         'middleware' => 'validateToken',
         'uses' => 'RepositoryEventController@event'
     ]);
+});
+
+$app->get('/healthcheck', function () use ($app) {
+    return response('');
 });

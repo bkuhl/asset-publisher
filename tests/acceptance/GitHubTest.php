@@ -5,6 +5,7 @@ namespace Tests\App;
 use GrahamCampbell\Flysystem\Facades\Flysystem;
 use GrahamCampbell\Flysystem\FlysystemManager;
 use TestCase;
+use Log;
 
 class GitHubTest extends \TestCase
 {
@@ -42,6 +43,9 @@ class GitHubTest extends \TestCase
      */
     public function respondsToGitHubHookAndDeploysToS3()
     {
+        // avoid extra logging when running tests
+        Log::shouldReceive('info');
+
         // for full request body, see https://developer.github.com/v3/activity/events/types/#createevent
         $this->json('POST', '/webhook/'.env('TOKEN'), [
             "ref" => "v1.1.0",

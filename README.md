@@ -11,6 +11,10 @@ This service responds to GitHub web hooks looking for semantically versioned tag
  * `USE_NAMESPACES` - Deploy assets in a subdirectory base on the git repository's name (e.g. `https://s3.amazonaws.com/my-bucket/[REPO-NAME]/v1.0.0/...`)
  * `BUILD_PATH` - Relative path to the directory within the git repository that should be deployed to s3.  Defaults to `build`
 
+**Healthcheck**
+
+`/healthcheck` provides a 200 OK response if container is healthy. 
+
 ## Amazon S3
 
  * `AWS_KEY`
@@ -19,3 +23,4 @@ This service responds to GitHub web hooks looking for semantically versioned tag
  * `AWS_REGION` (defaults to `us-east-1`
  
   > Despite the use of flysystem, distributors other than Amazon S3 are not supported at this time due to a limitation in uploading directories via flysystem.
+ 

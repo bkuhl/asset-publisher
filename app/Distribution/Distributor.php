@@ -5,6 +5,7 @@ namespace App\Distribution;
 use App\VCS\Repository;
 use Aws\S3\S3Client;
 use Illuminate\Config\Repository as ConfigRepository;
+use Log;
 
 class Distributor
 {
@@ -36,5 +37,7 @@ class Distributor
             $this->config->get('build.distribution.aws.bucket'),
             $namespace
         );
+
+        Log::info('Distributed version '.$version.' to S3 bucket '.$this->config->get('build.distribution.aws.bucket'));
     }
 }
