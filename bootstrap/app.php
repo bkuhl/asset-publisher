@@ -22,9 +22,14 @@ try {
 $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
-
-$app->configure('build');
 $app->withFacades();
+
+// load custom config file
+$app->configure('build');
+
+$app->routeMiddleware([
+    'validateToken' => \App\Http\Middleware\ValidateToken::class
+]);
 
 // $app->withEloquent();
 

@@ -43,7 +43,7 @@ class GitHubTest extends \TestCase
     public function respondsToGitHubHookAndDeploysToS3()
     {
         // for full request body, see https://developer.github.com/v3/activity/events/types/#createevent
-        $this->json('POST', '/webhook', [
+        $this->json('POST', '/webhook/'.env('TOKEN'), [
             "ref" => "v1.1.0",
             "ref_type" => "tag",
             "repository" => (object)[

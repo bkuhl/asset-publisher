@@ -18,5 +18,8 @@ $app->get('/', function () use ($app) {
 $app->group([
     'namespace' => 'App\Http\Controllers'
 ], function () use ($app) {
-    $app->post('/webhook', 'RepositoryEventController@event');
+    $app->post('/webhook/{token}', [
+        'middleware' => 'validateToken',
+        'uses' => 'RepositoryEventController@event'
+    ]);
 });

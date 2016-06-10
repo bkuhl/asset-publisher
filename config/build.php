@@ -7,11 +7,24 @@ return [
     | Build Path
     |--------------------------------------------------------------------------
     |
-    | The relative path to the directory within your git repo you'd like distributed.
+    | The relative path to the directory within your git repo you'd
+    | like distributed.
     |
     */
 
     'path' => env('BUILD_PATH', 'build'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Security Token
+    |--------------------------------------------------------------------------
+    |
+    | A security token will allow you to only process deploys for
+    | authorized requests.
+    |
+    */
+
+    'token' => env('TOKEN'),
 
     /*
     |--------------------------------------------------------------------------
