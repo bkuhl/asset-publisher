@@ -7,6 +7,7 @@ This service responds to GitHub web hooks looking for semantically versioned tag
 **Environment Variables**
 
  * `PRIVATE_KEY` - Used by the _CLI container_ to gain access to private repositories
+ * `NAMESPACE` - Deploy assets in a subdirectory (e.g. `https://s3.amazonaws.com/my-bucket/[NAMESPACE]/v1.0.0/...`)
  * `BUILD_PATH` - Relative path to the directory within the git repository that should be deployed to s3.  Defaults to `build`
 
 ## Amazon S3

@@ -26,10 +26,15 @@ class Distributor
 
     public function distribute(Repository $repository, string $version)
     {
+        $namespace = $version;
+        if ($this->config->get('build.namespace') != null) {
+            $namespace = $this->config->get('build.namespace').DIRECTORY_SEPARATOR.$namespace;
+        }
+
         $this->s3Client->uploadDirectory(
             $repository->path().DIRECTORY_SEPARATOR.$this->config->get('build.path'),
             $this->config->get('build.distribution.aws.bucket'),
-            $version
+            $namespace
         );
     }
 }
