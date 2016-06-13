@@ -21,7 +21,6 @@ before_install:
   - curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m`" > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - cp .env.example .env
   # pass environment variables in travis to the app
   - sed -ri 's/^PRIVATE_KEY=/PRIVATE_KEY=\$PRIVATE_KEY/' .env \
   - sed -ri 's/^AWS_KEY=/AWS_KEY=\$AWS_KEY/' .env \
@@ -34,6 +33,7 @@ before_install:
   # Start the docker stuff
   - docker-compose -v
   - docker-compose up -d
+  - cp .env.example .env
   - sleep 4
   - docker-compose ps
 install:
@@ -46,6 +46,7 @@ script:
   - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
   # Run tests
   - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit --testsuite=unit
+  - docker exec -it --user=www-data $(docker-compose ps -q web) ls -latr
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
