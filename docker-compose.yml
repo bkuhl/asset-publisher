@@ -2,13 +2,16 @@ version: '2'
 
 services:
   web:
+    image: nginx
+    volumes:
+      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d
+    ports:
+      - "80:80"
+  fpm:
     build:
       context: .
       dockerfile: infrastructure/Dockerfile
-    image: realpage/asset-publisher:web
+    image: realpage/asset-publisher:fpm
     env_file: .env
     volumes:
-      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d
-      - .:/var/www/html
-    ports:
-      - "80:80"
+      - ./:/var/www/html

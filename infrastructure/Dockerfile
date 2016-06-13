@@ -1,9 +1,7 @@
-FROM realpage/fpm-nginx:7
+FROM php:7-fpm-alpine
 
 # Copy the application files to the container
 ADD . /var/www/html
-ADD infrastructure/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-ADD infrastructure/nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN \
     # fix permissions locally
@@ -56,4 +54,4 @@ RUN chmod +x infrastructure/start.sh \
 USER root
 
 # Add private key and then start the process monitor
-ENTRYPOINT /var/www/html/infrastructure/start.sh;/init
+CMD /var/www/html/infrastructure/start.sh;php-fpm
