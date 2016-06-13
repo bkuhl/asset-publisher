@@ -2,10 +2,8 @@ FROM realpage/fpm-nginx:7
 
 # Copy the application files to the container
 ADD . /var/www/html
-ADD infrastructure/nginx /etc/nginx/conf.d
-
-# Get the latest composer
-ADD https://getcomposer.org/composer.phar /usr/bin/composer
+ADD infrastructure/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+ADD infrastructure/nginx/nginx.conf /etc/nginx/nginx.conf
 
 RUN \
     # fix permissions locally
