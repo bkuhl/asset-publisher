@@ -4,6 +4,8 @@ This service responds to GitHub web hooks looking for semantically versioned tag
 
 ## Usage
 
+Check out the [Docker repository](https://hub.docker.com/r/realpage/asset-publisher/) for the latest versions.
+
 **Environment Variables**
 
  * `PRIVATE_KEY` - Used by the _CLI container_ to gain access to private repositories
