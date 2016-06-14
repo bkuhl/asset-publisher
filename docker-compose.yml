@@ -3,18 +3,11 @@ version: '2'
 services:
   web:
     build:
-      context: ./infrastructure
-      dockerfile: nginx/Dockerfile
-    image: realpage/asset-publisher:nginx
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-    ports:
-      - "80:80"
-  fpm:
-    build:
       context: .
       dockerfile: infrastructure/Dockerfile
-    image: realpage/asset-publisher:fpm
-    env_file: .env
+    image: realpage/asset-publisher:web
+    env_file: .env.disabled
     volumes:
       - ./:/var/www/html
+    ports:
+      - "80:80"
