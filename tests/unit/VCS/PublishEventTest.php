@@ -3,7 +3,7 @@
 namespace Tests\App\VCS\GitHub;
 
 use App\Publisher;
-use App\VCS\GitHub\TagCreated;
+use App\VCS\GitHub\NewRelease;
 use App\VCS\PublishEvent;
 use App\VCS\Repository;
 use App\Version;
@@ -16,7 +16,7 @@ class PublishEventTest extends \TestCase
     /** @var MockInterface */
     protected $publisher;
 
-    /** @var MockInterface|TagCreated */
+    /** @var MockInterface|NewRelease */
     protected $event;
 
     public function setUp()

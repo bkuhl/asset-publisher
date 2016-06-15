@@ -42,7 +42,7 @@ return [
             'key'             => env('AWS_KEY'),
             'secret'          => env('AWS_SECRET'),
             'bucket'          => env('AWS_BUCKET'),
-            'region'          => env('AWS_REGION', 'us-east1'),
+            'region'          => env('AWS_REGION', 'us-east-1'),
             'version'         => 'latest',
             // 'bucket_endpoint' => false,
             // 'calculate_md5'   => true,

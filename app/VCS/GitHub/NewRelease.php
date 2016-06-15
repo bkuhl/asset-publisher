@@ -8,7 +8,7 @@ use App\VCS\Repository;
 use App\Version;
 use Illuminate\Http\Request;
 
-class TagCreated extends PublishEvent
+class NewRelease extends PublishEvent
 {
     /** @var Request */
     protected $request;
@@ -34,6 +34,6 @@ class TagCreated extends PublishEvent
 
     public function version(): Version
     {
-        return app(Version::class, [$this->request->json('ref')]);
+        return app(Version::class, [$this->request->json('release.tag_name')]);
     }
 }

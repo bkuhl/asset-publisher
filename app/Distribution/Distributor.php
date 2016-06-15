@@ -28,7 +28,7 @@ class Distributor
     public function distribute(Repository $repository, string $version)
     {
         $namespace = $version;
-        if ($this->config->get('build.use_namespaces')) {
+        if ($this->config->get('build.distribution.use_namespaces')) {
             $namespace = $repository->name().DIRECTORY_SEPARATOR.$namespace;
         }
 

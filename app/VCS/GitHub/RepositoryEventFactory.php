@@ -15,8 +15,8 @@ class RepositoryEventFactory
             throw new UnrecognizedGitProvider;
         }
 
-        if ($request->header('X-GitHub-Event') === 'CreateEvent' && $request->json('ref_type') === 'tag') {
-            return app(TagCreated::class, [$request]);
+        if ($request->header('X-GitHub-Event') === 'release') {
+            return app(NewRelease::class, [$request]);
         }
 
         throw new UnhandledRepositoryEvent;

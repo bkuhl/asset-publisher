@@ -43,7 +43,7 @@ class DistributorTest extends \TestCase
         $buildPath = uniqid();
         $this->config->shouldReceive('get')->with('build.path')->andReturn($buildPath);
         $this->config->shouldReceive('get')->with('build.distribution.aws.bucket')->andReturn($awsBucket);
-        $this->config->shouldReceive('get')->with('build.use_namespaces')->andReturnTrue();
+        $this->config->shouldReceive('get')->with('build.distribution.use_namespaces')->andReturnTrue();
 
         $version = uniqid();
         $path = uniqid();

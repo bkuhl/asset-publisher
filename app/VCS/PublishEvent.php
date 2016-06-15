@@ -22,7 +22,6 @@ abstract class PublishEvent implements RepositoryEvent
 
     public function handle(): bool
     {
-        // @todo queue this
         return $this->publisher->publish($this->version(), $this->repository());
     }
 }

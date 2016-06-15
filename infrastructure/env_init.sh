@@ -1,7 +1,5 @@
 #!/bin/sh
 
-ps -ef
-
 echo "Setting environment variables for php-fpm..."
 export > /tmp/vars
 

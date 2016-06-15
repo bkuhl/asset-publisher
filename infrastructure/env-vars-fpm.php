@@ -24,12 +24,17 @@ function in($value)
 		'APP_ENV',
 		'APP_DEBUG',
 		'APP_KEY',
+		'USE_NAMESPACES',
 		'CACHE_DRIVER',
 		'QUEUE_DRIVER',
 		'SESSION_DRIVER',
 		'PRIVATE_KEY',
 		'TOKEN',
 		'BUILD_PATH',
+		'AWS_BUCKET',
+		'AWS_SECRET',
+		'AWS_KEY',
+		'AWS_REGION',
 	];
 
 	if (in_array($value, $whitelist)) {

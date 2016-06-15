@@ -3,14 +3,14 @@
 namespace Tests\App\VCS\GitHub;
 
 use App\Publisher;
-use App\VCS\GitHub\TagCreated;
+use App\VCS\GitHub\NewRelease;
 use App\VCS\Repository;
 use App\Version;
 use Illuminate\Http\Request;
 use Mockery;
 use Mockery\MockInterface;
 
-class TagCreatedTest extends \TestCase
+class NewReleaseTest extends \TestCase
 {
     /** @var MockInterface */
     protected $request;
@@ -18,7 +18,7 @@ class TagCreatedTest extends \TestCase
     /** @var MockInterface */
     protected $publisher;
 
-    /** @var TagCreated */
+    /** @var NewRelease */
     protected $event;
 
     public function setUp()
@@ -28,7 +28,7 @@ class TagCreatedTest extends \TestCase
         $this->request = Mockery::mock(Request::class);
         $this->publisher = Mockery::mock(Publisher::class);
 
-        $this->event = new TagCreated($this->request, $this->publisher);
+        $this->event = new NewRelease($this->request, $this->publisher);
     }
 
     /**
@@ -53,7 +53,7 @@ class TagCreatedTest extends \TestCase
      */
     public function suppliesVersion()
     {
-        $this->request->shouldReceive('json')->andReturn('v1.2.3');
+        $this->request->shouldReceive('json')->with('release.tag_name')->andReturn('v1.2.3');
 
         $version = $this->event->version();
 

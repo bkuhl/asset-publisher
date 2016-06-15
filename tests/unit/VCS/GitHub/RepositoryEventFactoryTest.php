@@ -32,8 +32,7 @@ class RepositoryEventFactoryTest extends \TestCase
     public function identifiesGitHubTagCreatedEvents()
     {
         $this->request->shouldReceive('hasHeader')->with('X-GitHub-Event')->andReturnTrue();
-        $this->request->shouldReceive('header')->with('X-GitHub-Event')->andReturn('CreateEvent');
-        $this->request->shouldReceive('json')->with('ref_type')->andReturn('tag');
+        $this->request->shouldReceive('header')->with('X-GitHub-Event')->andReturn('release');
 
         $this->assertInstanceOf(RepositoryEvent::class, $this->eventFactory->make($this->request));
     }

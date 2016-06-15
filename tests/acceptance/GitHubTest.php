@@ -48,13 +48,15 @@ class GitHubTest extends \TestCase
 
         // for full request body, see https://developer.github.com/v3/activity/events/types/#createevent
         $this->json('POST', '/webhook/'.env('TOKEN'), [
-            "ref" => "v1.1.0",
-            "ref_type" => "tag",
-            "repository" => (object)[
-                "full_name" => "realpage/asset-publisher-test"
+            'action' => 'published',
+            'release' => [
+                'tag_name' => 'v1.1.0'
+            ],
+            "repository" => [
+                'full_name' => 'realpage/asset-publisher-test'
             ]
         ], [
-            'X-GitHub-Event' => 'CreateEvent'
+            'X-GitHub-Event' => 'release'
         ])
             ->assertResponseOk();
 

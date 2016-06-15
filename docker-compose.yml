@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: infrastructure/Dockerfile
     image: realpage/asset-publisher:web
-    env_file: .env.disabled
+    env_file: .env
     volumes:
       - ./:/var/www/html
     ports:
