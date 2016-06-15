@@ -45,7 +45,7 @@ script:
   # Ensure breaking PSR2 compliance fails in CI
   - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
   # Run tests
-  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit
+  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit --testsuite=unit
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
