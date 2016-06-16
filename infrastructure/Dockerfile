@@ -33,13 +33,13 @@ RUN \
     && chmod +x /usr/bin/composer \
     && mkdir -p /home/www-data/.composer \
 
-    # allow git checkouts to write to a folder
-    && chmod 600 /var/www/html/storage/git \
+    # parallel dependency installation
+    && composer global require hirak/prestissimo \
 
     # give www-data the keys
     && chown -R www-data:www-data /var/www/html /usr/bin/composer /home/www-data \
 
-    && chmod -R 744 /home/www-data/.composer
+    && chmod -R 744 /home/www-data/.composer /var/www/html/storage/git
 
 WORKDIR /var/www/html
 
@@ -47,13 +47,13 @@ USER www-data
 
 RUN chmod +x infrastructure/start.sh \
 
-    # parallel dependency installation
-    && composer global require hirak/prestissimo \
-
     # production-ready dependencies
     && composer install  --no-interaction --no-dev --prefer-dist
 
 USER root
 
+# override base container's entrypoint so we can use CMD
+ENTRYPOINT []
+
 # Add private key and then start the process monitor
-ENTRYPOINT /var/www/html/infrastructure/start.sh;/init
+CMD /var/www/html/infrastructure/start.sh;/init

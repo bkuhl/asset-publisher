@@ -8,7 +8,6 @@ services:
     image: realpage/asset-publisher:web
     env_file: .env
     volumes:
-      - ./infrastructure/nginx/conf.d:/etc/nginx/conf.d
-      - .:/var/www/html
+      - ./:/var/www/html
     ports:
       - "80:80"
