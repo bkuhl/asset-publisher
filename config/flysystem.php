@@ -49,7 +49,7 @@ return [
             // 'scheme'          => 'https',
             // 'endpoint'        => 'your-url',
             // 'prefix'          => 'your-prefix',
-            // 'visibility'      => 'public',
+            'visibility'      => 'public',
             // 'eventable'       => true,
             // 'cache'           => 'foo'
         ],
