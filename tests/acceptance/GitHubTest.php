@@ -39,6 +39,11 @@ class GitHubTest extends \TestCase
     }
 
     /**
+     * Note: This test is NOT run in CI as there is a permissions issue with the
+     * SSH key that stops the build from continuing.  This is likely a docker
+     * issue so when the docker version is updated we should look into enabling
+     * this test again at a later time.
+     *
      * @test
      */
     public function respondsToGitHubHookAndDeploysToS3()

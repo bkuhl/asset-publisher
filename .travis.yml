@@ -14,6 +14,7 @@ before_install:
   - export DOCKER_REPO="${TRAVIS_REPO_SLUG,,}"
   - export IMAGE_SLUG="$TRAVIS_BRANCH.${TRAVIS_COMMIT::8}.${TRAVIS_BUILD_ID}"
   # Upgrade docker/docker-compose versions so we can use v2 of the Dockerfile format
+  # @todo If the docker version is upgraded, try running acceptance tests in CI
   - docker -v
   - sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine=1.10.3-0~trusty
   - docker -v
