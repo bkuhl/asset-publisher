@@ -11,6 +11,18 @@ This service responds to GitHub web hooks looking for semantically versioned tag
  * `USE_NAMESPACES` - Deploy assets in a subdirectory base on the git repository's name (e.g. `https://s3.amazonaws.com/my-bucket/[REPO-NAME]/v1.0.0/...`)
  * `BUILD_PATH` - Relative path to the directory within the git repository that should be deployed to s3.  Defaults to `build`
 
+**GitHub Webhook**
+
+After you've deployed the docker container, add a webhook to the desired repo with the following:
+
+ * Payload URL: http://[DOMAIN_OR_IP]/webhook/[ENV_VAR_TOKEN]/
+ * Content-Type: application/json
+ * Configure only **Release** events
+ 
+**Triggering Deployment**
+
+Simple add a new GitHub release with a semantically versioned tag and you're all set.
+
 **Healthcheck**
 
 `/healthcheck` provides a 200 OK response if container is healthy. 
