@@ -1,5 +1,10 @@
 FROM realpage/fpm-nginx:7
 
+# Copy the application files to the container
+ADD . /var/www/html
+ADD infrastructure/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+ADD infrastructure/nginx/nginx.conf /etc/nginx/nginx.conf
+
 RUN \
     # fix permissions locally
     #sed -ri 's/^www-data:x:82:82:/www-data:x:1000:1000:/' /etc/passwd \
@@ -21,16 +26,10 @@ RUN \
         openssh \
 
     # php extensions the app will need
-    && docker-php-ext-install mcrypt mbstring pdo_mysql
+    && docker-php-ext-install mcrypt mbstring pdo_mysql \
 
-# Copy the application files to the container
-ADD . /var/www/html
-ADD infrastructure/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
-ADD infrastructure/nginx/nginx.conf /etc/nginx/nginx.conf
-
-RUN \
     # install composer
-    wget -O /usr/bin/composer http://getcomposer.org/composer.phar \
+    && wget -O /usr/bin/composer http://getcomposer.org/composer.phar \
     && chmod +x /usr/bin/composer \
     && mkdir -p /home/www-data/.composer \
 
@@ -47,7 +46,6 @@ WORKDIR /var/www/html
 USER www-data
 
 RUN chmod +x infrastructure/start.sh \
-    && chmod +x infrastructure/env_init.sh \
 
     # production-ready dependencies
     && composer install  --no-interaction --no-dev --prefer-dist
