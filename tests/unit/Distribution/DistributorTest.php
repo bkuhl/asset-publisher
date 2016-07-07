@@ -4,6 +4,7 @@ namespace Tests\App;
 
 use App\Distribution\Distributor;
 use App\VCS\Repository;
+use Aws\Command;
 use Aws\S3\S3Client;
 use Mockery;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -55,7 +56,13 @@ class DistributorTest extends \TestCase
         $this->s3Client->shouldReceive('uploadDirectory')->with(
             $path.DIRECTORY_SEPARATOR.$buildPath,
             $awsBucket,
-            $name.DIRECTORY_SEPARATOR.$version
+            $name.DIRECTORY_SEPARATOR.$version,
+            [
+                'before'        => function (Command $command) {
+                    $command['ACL'] = 'public-read';
+                },
+                'concurrency'   => 20
+            ]
         )->once();
 
         Log::shouldReceive('info')->once();
