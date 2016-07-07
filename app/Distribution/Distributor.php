@@ -10,6 +10,7 @@ use Log;
 
 class Distributor
 {
+
     /** @var ConfigRepository */
     protected $config;
 
@@ -37,14 +38,25 @@ class Distributor
             $repository->path().DIRECTORY_SEPARATOR.$this->config->get('build.path'),
             $this->config->get('build.distribution.aws.bucket'),
             $namespace,
-            [
-                'before'        => function (Command $command) {
-                    $command['ACL'] = 'public-read';
-                },
-                'concurrency'   => 20
-            ]
+            $this->distributorOptions()
         );
 
         Log::info('Distributed version '.$version.' to S3 bucket '.$this->config->get('build.distribution.aws.bucket'));
+    }
+
+    /**
+     * Due to the difficulty of testing closures, the team
+     * decided not to unit test this method
+     *
+     * @return array
+     */
+    public function distributorOptions() : array
+    {
+        return [
+            'before'        => function (Command $command) {
+                $command['ACL'] = 'public-read';
+            },
+            'concurrency'   => 20
+        ];
     }
 }
