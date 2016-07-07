@@ -49,7 +49,9 @@ return [
             // 'scheme'          => 'https',
             // 'endpoint'        => 'your-url',
             // 'prefix'          => 'your-prefix',
-            'visibility'      => 'public',
+            # This setting isn't obeyed since we're not using flysystem
+            # to handle the uploads but using the S3 driver directly
+            // 'visibility'      => 'public',
             // 'eventable'       => true,
             // 'cache'           => 'foo'
         ],
