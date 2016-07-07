@@ -3,6 +3,7 @@
 namespace App\Distribution;
 
 use App\VCS\Repository;
+use Aws\Command;
 use Aws\S3\S3Client;
 use Illuminate\Config\Repository as ConfigRepository;
 use Log;
@@ -35,7 +36,13 @@ class Distributor
         $this->s3Client->uploadDirectory(
             $repository->path().DIRECTORY_SEPARATOR.$this->config->get('build.path'),
             $this->config->get('build.distribution.aws.bucket'),
-            $namespace
+            $namespace,
+            [
+                'before'        => function (Command $command) {
+                    $command['ACL'] = 'public-read';
+                },
+                'concurrency' => 20
+            ]
         );
 
         Log::info('Distributed version '.$version.' to S3 bucket '.$this->config->get('build.distribution.aws.bucket'));
