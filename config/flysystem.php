@@ -49,7 +49,9 @@ return [
             // 'scheme'          => 'https',
             // 'endpoint'        => 'your-url',
             // 'prefix'          => 'your-prefix',
-            'visibility'      => 'public',
+            # this setting isn't obeyed since we're not using flysystem's
+            # upload capabilities but using Amazon's uploadDirectory
+            //'visibility'      => 'public',
             // 'eventable'       => true,
             // 'cache'           => 'foo'
         ],

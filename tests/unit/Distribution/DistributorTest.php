@@ -4,6 +4,7 @@ namespace Tests\App;
 
 use App\Distribution\Distributor;
 use App\VCS\Repository;
+use Aws\Command;
 use Aws\S3\S3Client;
 use Mockery;
 use Illuminate\Config\Repository as ConfigRepository;
@@ -31,7 +32,8 @@ class DistributorTest extends \TestCase
         $this->config = Mockery::mock(ConfigRepository::class);
         $this->app->instance('config', $this->config);
 
-        $this->distributor = new Distributor();
+        $this->distributor = Mockery::mock(Distributor::class, ['distributorOptions']);
+        $this->distributor->shouldDeferMissing();
     }
 
     /**
@@ -48,14 +50,19 @@ class DistributorTest extends \TestCase
         $version = uniqid();
         $path = uniqid();
         $name = uniqid();
+        $distributorOptions = [uniqid()];
         $repository = Mockery::mock(Repository::class);
         $repository->shouldReceive('path')->andReturn($path);
         $repository->shouldReceive('name')->andReturn($name);
 
+        $this->distributor->shouldReceive('distributorOptions')->andReturn($distributorOptions);
+
+        // because of the closure nature involved with this test
         $this->s3Client->shouldReceive('uploadDirectory')->with(
             $path.DIRECTORY_SEPARATOR.$buildPath,
             $awsBucket,
-            $name.DIRECTORY_SEPARATOR.$version
+            $name.DIRECTORY_SEPARATOR.$version,
+            $distributorOptions
         )->once();
 
         Log::shouldReceive('info')->once();
