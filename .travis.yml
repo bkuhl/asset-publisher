@@ -5,18 +5,13 @@ services: docker
 php:
 - 7.0
 env:
-  DOCKER_COMPOSE_VERSION: 1.6.2
-  APP_ENV: local
-  APP_DEBUG: true
-  CACHE_DRIVER: array
-  QUEUE_DRIVER: redis
+  DOCKER_COMPOSE_VERSION: 1.8.0
 before_install:
   - export DOCKER_REPO="${TRAVIS_REPO_SLUG,,}"
   - export IMAGE_SLUG="$TRAVIS_BRANCH.${TRAVIS_COMMIT::8}.${TRAVIS_BUILD_ID}"
-  # Upgrade docker/docker-compose versions so we can use v2 of the Dockerfile format
-  # @todo If the docker version is upgraded, try running acceptance tests in CI
+  # Upgrade docker/docker-compose
   - docker -v
-  - sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine=1.10.3-0~trusty
+  - sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine=1.12.0-0~trusty
   - docker -v
   - sudo rm /usr/local/bin/docker-compose
   - curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m`" > docker-compose
@@ -46,7 +41,7 @@ script:
   # Ensure breaking PSR2 compliance fails in CI
   - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
   # Run tests
-  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit --testsuite=unit
+  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
