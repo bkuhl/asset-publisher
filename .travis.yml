@@ -33,6 +33,8 @@ before_install:
   - sleep 4
   - docker-compose ps
 install:
+  - docker exec -it --user=www-data $(docker-compose ps -q web) whoami
+  - docker exec -it --user=www-data $(docker-compose ps -q web) ls -latr .
   # Install dev php dependencies
   - docker exec -it --user=www-data $(docker-compose ps -q web) composer install --no-interaction --prefer-dist
 script:
