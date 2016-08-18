@@ -22,6 +22,7 @@ before_install:
   - sed -ri 's/^PRIVATE_KEY=/PRIVATE_KEY=\$PRIVATE_KEY/' .env \
   - sed -ri 's/^AWS_KEY=/AWS_KEY=\$AWS_KEY/' .env \
   - sed -ri 's/^AWS_SECRET=/AWS_SECRET=\$AWS_SECRET/' .env \
+  - sed -ri 's/^GITHUB_API_TOKEN=/GITHUB_API_TOKEN=\$GITHUB_API_TOKEN/' .env \
   # Stop the postgres instance travis sets up automatically
   - sudo /etc/init.d/postgresql stop
   # set env vars in the build settings to interact with repositories
