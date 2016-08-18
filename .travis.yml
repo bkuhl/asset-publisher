@@ -40,8 +40,8 @@ script:
   - docker exec -it --user=www-data $(docker-compose ps -q web) sh -c "vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
   # Ensure breaking PSR2 compliance fails in CI
   - docker exec -it --user=www-data $(docker-compose ps -q web) sh -c "vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app"
-  # Run tests
-  - docker exec -it --user=www-data $(docker-compose ps -q web) sh -c "vendor/bin/phpunit"
+  # Run tests as root so the root user's ssh key is used
+  - docker exec -it $(docker-compose ps -q web) sh -c "vendor/bin/phpunit"
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
