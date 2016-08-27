@@ -1,6 +1,6 @@
 ## Asset Publisher [![Build Status](https://travis-ci.org/realpage/asset-publisher.svg?branch=master)](https://travis-ci.org/realpage/asset-publisher)
 
-This service responds to GitHub web hooks looking for semantically versioned tags and deploying minor and patch versions (i.e. - v1.2/v1.2.3) to a distributor (i.e. - Amazon S3).
+This service responds to GitHub webhooks looking for semantically versioned tags and deploying minor and patch versions (i.e. - v1.2/v1.2.3) to a distributor (i.e. - Amazon S3).
 
 ## Usage
 
