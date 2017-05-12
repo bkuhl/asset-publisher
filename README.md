@@ -37,4 +37,9 @@ Simple add a new GitHub release with a semantically versioned tag and you're all
  * `AWS_REGION` (defaults to `us-east-1`
  
   > Despite the use of flysystem, distributors other than Amazon S3 are not supported at this time due to a limitation in uploading directories via flysystem.
- 
+
+## FAQ
+
+**When using Cloudfront, why aren't my minor version (e.g. v1.1) assets being updated when a new patch version (e.g. v1.1.2) is released?**
+
+CDN services like CloudFront cache assets for a certain timeframe (Cloudfront defaults to 24 hours) and only obtain fresh versions of files when the cache expires.  Assets won't be immediately updated unless a [cache invalidation request](http://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/Invalidation.html) is submitted.
