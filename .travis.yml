@@ -38,7 +38,7 @@ script:
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
-  script: docker images && docker tag "${DOCKER_REPO}:web" "${DOCKER_REPO}:${TRAVIS_TAG}" && docker push "${DOCKER_REPO}:${TRAVIS_TAG}"
+  script: docker images && docker tag "${DOCKER_REPO}:web" "${DOCKER_REPO}:${TRAVIS_TAG}" && docker push "${DOCKER_REPO}:${TRAVIS_TAG}" && docker tag "${DOCKER_REPO}:web" "${DOCKER_REPO}:latest" && docker push "${DOCKER_REPO}:latest"
   skip_cleanup: false
   on:
     tags: true
