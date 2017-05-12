@@ -23,6 +23,14 @@ class AppServiceProvider extends ServiceProvider
             return app('flysystem.connection')->getAdapter()->getClient();
         });
 
+        if (getenv('BUGSNAG_API_KEY', null) != null) {
+            $this->app->alias('bugsnag.logger', \Illuminate\Contracts\Logging\Log::class);
+            $this->app->alias('bugsnag.logger', \Psr\Log\LoggerInterface::class);
+            $this->app->extend(\Psr\Log\LoggerInterface::class, function ($logger, $app) {
+                return new \Bugsnag\BugsnagLaravel\MultiLogger([$logger, $app['bugsnag.logger']]);
+            });
+        }
+
         // send logs to stdout
         $logger = $this->app->make(\Psr\Log\LoggerInterface::class);
         $logger->popHandler();

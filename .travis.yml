@@ -5,7 +5,6 @@ services: docker
 php:
 - 7.0
 env:
-  DOCKER_COMPOSE_VERSION: 1.6.2
   APP_ENV: local
   APP_DEBUG: true
   CACHE_DRIVER: array
@@ -13,25 +12,14 @@ env:
 before_install:
   - export DOCKER_REPO="${TRAVIS_REPO_SLUG,,}"
   - export IMAGE_SLUG="$TRAVIS_BRANCH.${TRAVIS_COMMIT::8}.${TRAVIS_BUILD_ID}"
-  # Upgrade docker/docker-compose versions so we can use v2 of the Dockerfile format
-  # @todo If the docker version is upgraded, try running acceptance tests in CI
-  - docker -v
-  - sudo apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install docker-engine=1.10.3-0~trusty
-  - docker -v
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m`" > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
   - cp .env.example .env
   # pass environment variables in travis to the app
-  - sed -ri 's/^PRIVATE_KEY=/PRIVATE_KEY=\$PRIVATE_KEY/' .env \
-  - sed -ri 's/^AWS_KEY=/AWS_KEY=\$AWS_KEY/' .env \
-  - sed -ri 's/^AWS_SECRET=/AWS_SECRET=\$AWS_SECRET/' .env \
+  - sed -ri "s|PRIVATE_KEY=|PRIVATE_KEY='$PRIVATE_KEY'|" .env
+  - sed -ri "s|AWS_KEY=|AWS_KEY='$AWS_KEY'|" .env
+  - sed -ri "s|AWS_SECRET=|AWS_SECRET='$AWS_SECRET'|" .env
   # Stop the postgres instance travis sets up automatically
   - sudo /etc/init.d/postgresql stop
-  # set env vars in the build settings to interact with repositories
-  # see https://docs.travis-ci.com/user/environment-variables/#Defining-Variables-in-Repository-Settings
-  - docker login -e="$DOCKER_EMAIL" -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+  - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   # Start the docker stuff
   - docker-compose -v
   - docker-compose up -d
@@ -39,14 +27,14 @@ before_install:
   - docker-compose ps
 install:
   # Install dev php dependencies
-  - docker exec -it --user=www-data $(docker-compose ps -q web) composer install --no-interaction --prefer-dist
+  - docker-compose exec web sh -c "composer install --no-interaction --prefer-dist"
 script:
   # Ensure phpcs triggers a failing build
-  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --config-set ignore_warnings_on_exit 1
+  - docker-compose exec web sh -c "vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
   # Ensure breaking PSR2 compliance fails in CI
-  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app
+  - docker-compose exec web sh -c "vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app"
   # Run tests
-  - docker exec -it --user=www-data $(docker-compose ps -q web) vendor/bin/phpunit --testsuite=unit
+  - docker-compose exec web sh -c "vendor/bin/phpunit --testsuite=unit"
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
@@ -54,6 +42,3 @@ deploy:
   skip_cleanup: false
   on:
     tags: true
-notifications:
-  slack:
-    secure: ${SLACK_KEY}

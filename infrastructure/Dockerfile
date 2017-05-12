@@ -16,8 +16,6 @@ RUN \
 
     # fix permissions in CI
     && apk add --update --no-cache \
-        # needed for mcrypt
-        libmcrypt \
 
         # needed for composer
         git zip unzip \
@@ -26,7 +24,10 @@ RUN \
         openssh \
 
     # php extensions the app will need
-    && docker-php-ext-install mcrypt mbstring pdo_mysql \
+    && docker-php-ext-install mbstring pdo_mysql \
+
+        # needed for forking processes in laravel queues as of Laravel 5.3
+        pcntl \
 
     # install composer
     && wget -O /usr/bin/composer http://getcomposer.org/composer.phar \
