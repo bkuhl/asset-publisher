@@ -14,9 +14,9 @@ before_install:
   - export IMAGE_SLUG="$TRAVIS_BRANCH.${TRAVIS_COMMIT::8}.${TRAVIS_BUILD_ID}"
   - cp .env.example .env
   # pass environment variables in travis to the app
-  - sed -ri "s|PRIVATE_KEY=|PRIVATE_KEY='$PRIVATE_KEY'|" .env
-  - sed -ri "s|AWS_KEY=|AWS_KEY='$AWS_KEY'|" .env
-  - sed -ri "s|AWS_SECRET=|AWS_SECRET='$AWS_SECRET'|" .env
+  - sed -ri "s|AWS_KEY=|AWS_KEY=$AWS_KEY|" .env
+  - sed -ri "s|AWS_SECRET=|AWS_SECRET=$AWS_SECRET|" .env
+  - sed -ri "s|PRIVATE_KEY=|PRIVATE_KEY=$PRIVATE_KEY|" .env
   # Stop the postgres instance travis sets up automatically
   - sudo /etc/init.d/postgresql stop
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
@@ -27,14 +27,14 @@ before_install:
   - docker-compose ps
 install:
   # Install dev php dependencies
-  - docker-compose exec web sh -c "composer install --no-interaction --prefer-dist"
+  - docker-compose exec --user www-data web sh -c "composer install --no-interaction --prefer-dist"
 script:
   # Ensure phpcs triggers a failing build
-  - docker-compose exec web sh -c "vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
+  - docker-compose exec --user www-data web sh -c "vendor/bin/phpcs --config-set ignore_warnings_on_exit 1"
   # Ensure breaking PSR2 compliance fails in CI
-  - docker-compose exec web sh -c "vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app"
+  - docker-compose exec --user www-data web sh -c "vendor/bin/phpcs --standard=PSR2 --ignore=app/Http/routes.php app"
   # Run tests
-  - docker-compose exec web sh -c "vendor/bin/phpunit --testsuite=unit"
+  - docker-compose exec --user www-data web sh -c "vendor/bin/phpunit"
 deploy:
   provider: script
   api_key: "$GITHUB_API_TOKEN"
