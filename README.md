@@ -12,6 +12,7 @@ Check out the [Docker repository](https://hub.docker.com/r/realpage/asset-publis
  * `TOKEN` - A unique token to help abstract endpoints
  * `USE_NAMESPACES` - Deploy assets in a subdirectory base on the git repository's name (e.g. `https://s3.amazonaws.com/my-bucket/[REPO-NAME]/v1.0.0/...`)
  * `BUILD_PATH` - Relative path to the directory within the git repository that should be deployed to s3.  Defaults to `build`
+ * `BUGSNAG_API_KEY` (optional) - Will report exceptions to bugsnag if present
 
 **GitHub Webhook**
 
