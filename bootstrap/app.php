@@ -85,7 +85,7 @@ $app->singleton(
 */
 
 $app->register(App\Providers\AppServiceProvider::class);
-if (getenv('BUGSNAG_API_KEY', null) != null) {
+if (env('BUGSNAG_API_KEY', null) != null) {
     $app->register(Bugsnag\BugsnagLaravel\BugsnagServiceProvider::class);
 }
 // $app->register(App\Providers\AuthServiceProvider::class);
